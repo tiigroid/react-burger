@@ -1,0 +1,16 @@
+.container {
+  display: grid;
+  grid-template-rows: auto auto 1fr;
+  min-height: 0;
+}
+
+.tabs {
+  display: flex;
+}
+
+.ingredients {
+  height: 100%;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  margin-right: -12px;
+}
