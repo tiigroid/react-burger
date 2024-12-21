@@ -4,6 +4,8 @@ import { Tab } from '@ya.praktikum/react-developer-burger-ui-components';
 import styles from './burger-ingredients.module.css';
 import IngredientGroup from '../ingredient-group/ingredient-group';
 import IngredientDetails from '../ingredient-details/ingredient-details';
+import { INGREDIENT_OBJECT } from '../../utils/types';
+import Modal from '../modal/modal';
 
 export default function BurgerIngredients({ data }) {
 
@@ -40,27 +42,14 @@ export default function BurgerIngredients({ data }) {
       </div>
 
       {detailedIngredient &&
-        <IngredientDetails ingredient={detailedIngredient} onClose={() => setDetailedIngredient(undefined)}/>}
+        <Modal title='Детали ингредиента' onClose={() => setDetailedIngredient(undefined)}>
+          <IngredientDetails ingredient={detailedIngredient}/>
+        </Modal>}
 
     </section>
   )
 }
 
 BurgerIngredients.propTypes = {
-  data: PropTypes.arrayOf(
-    PropTypes.shape({
-      proteins: PropTypes.number.isRequired,
-      calories: PropTypes.number.isRequired,
-      carbohydrates: PropTypes.number.isRequired,
-      fat: PropTypes.number.isRequired,
-      image: PropTypes.string.isRequired,
-      image_large: PropTypes.string.isRequired,
-      image_mobile: PropTypes.string.isRequired,
-      name: PropTypes.string.isRequired,
-      price: PropTypes.number.isRequired,
-      type: PropTypes.string.isRequired,
-      _id: PropTypes.string.isRequired,
-      __v: PropTypes.number.isRequired,
-    })
-  ).isRequired,
+  data: PropTypes.arrayOf(PropTypes.shape(INGREDIENT_OBJECT)).isRequired
 }; 

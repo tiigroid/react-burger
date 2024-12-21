@@ -1,6 +1,7 @@
 import { Counter, CurrencyIcon } from '@ya.praktikum/react-developer-burger-ui-components';
 import PropTypes from 'prop-types';
 import styles from './ingredient-group.module.css';
+import { INGREDIENT_OBJECT } from '../../utils/types';
 
 export default function IngredientGroup({ type, data, onIngredientClick }) {
   return (
@@ -25,20 +26,6 @@ export default function IngredientGroup({ type, data, onIngredientClick }) {
 
 IngredientGroup.propTypes = {
   type: PropTypes.string,
-  data: PropTypes.arrayOf(
-    PropTypes.shape({
-      proteins: PropTypes.number.isRequired,
-      calories: PropTypes.number.isRequired,
-      carbohydrates: PropTypes.number.isRequired,
-      fat: PropTypes.number.isRequired,
-      image: PropTypes.string.isRequired,
-      image_large: PropTypes.string.isRequired,
-      image_mobile: PropTypes.string.isRequired,
-      name: PropTypes.string.isRequired,
-      price: PropTypes.number.isRequired,
-      type: PropTypes.string.isRequired,
-      _id: PropTypes.string.isRequired,
-      __v: PropTypes.number.isRequired,
-    })).isRequired,
+  data: PropTypes.arrayOf(PropTypes.shape(INGREDIENT_OBJECT)).isRequired,
   onIngredientClick: PropTypes.func,
 }; 

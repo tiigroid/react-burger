@@ -29,7 +29,7 @@ export default function Modal({ title, children, onClose }) {
         </div>
       </ModalOverlay>
       ,
-      document.getElementById('root')
+      document.getElementById('modals')
     )
   )
 }
