@@ -1,0 +1,31 @@
+.ingredients {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 24px;
+  row-gap: 56px;
+  margin: 0;
+}
+
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  row-gap: 4px;
+  align-items: center;
+  cursor: pointer;
+}
+
+.image {
+  width: 240px;
+  height: 120px;
+}
+
+.price {
+  display: flex;
+  align-items: center;
+  height: 32px;
+}
+
+.name {
+  text-align: center;
+}
