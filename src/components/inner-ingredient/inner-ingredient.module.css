@@ -1,0 +1,21 @@
+.innerIngredient {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  column-gap: 8px;
+  margin: 0 12px 0 0;
+  position: relative;
+}
+
+.hovered:before {
+  content: '';
+  height: 6px;
+  border-radius: 10px;
+  width: 85%;
+  background: linear-gradient(63.18deg, #801ab3 0%, #4c4cff 100%);
+  opacity: .6;
+  position: absolute;
+  left: 10%;
+  top: -10px;
+  z-index: 1;
+}

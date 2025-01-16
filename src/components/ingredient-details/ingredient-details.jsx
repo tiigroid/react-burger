@@ -1,34 +1,32 @@
-import PropTypes from 'prop-types';
+import { useSelector  } from 'react-redux';
 import styles from './ingredient-details.module.css';
-import { INGREDIENT_OBJECT } from '../../utils/types';
 
-export default function IngredientDetails({ ingredient }) {
+export default function IngredientDetails() {
+
+  const { detailedIngredient } = useSelector((state) => state.ingredientDetails);
+
   return (
     <>
-      <img src={ingredient.image_large} alt={ingredient.name} className={styles.image}/>
-      <h1 className='text text_type_main-medium mt-4'>{ingredient.name}</h1>
+      <img src={detailedIngredient.image_large} alt={detailedIngredient.name} className={styles.image}/>
+      <h1 className='text text_type_main-medium mt-4'>{detailedIngredient.name}</h1>
       <div className={styles.details}>
         <div className={styles.card}>
           <p className='text text_type_main-default text_color_inactive'>Калории, ккал</p>
-          <p className='text text_type_digits-default text_color_inactive'>{ingredient.calories}</p>
+          <p className='text text_type_digits-default text_color_inactive'>{detailedIngredient.calories}</p>
         </div>
         <div className={styles.card}>
           <p className='text text_type_main-default text_color_inactive'>Белки, г</p>
-          <p className='text text_type_digits-default text_color_inactive'>{ingredient.proteins}</p>
+          <p className='text text_type_digits-default text_color_inactive'>{detailedIngredient.proteins}</p>
         </div>
         <div className={styles.card}>
           <p className='text text_type_main-default text_color_inactive'>Жиры, г</p>
-          <p className='text text_type_digits-default text_color_inactive'>{ingredient.fat}</p>
+          <p className='text text_type_digits-default text_color_inactive'>{detailedIngredient.fat}</p>
         </div>
         <div className={styles.card}>
           <p className='text text_type_main-default text_color_inactive'>Углеводы, г</p>
-          <p className='text text_type_digits-default text_color_inactive'>{ingredient.carbohydrates}</p>
+          <p className='text text_type_digits-default text_color_inactive'>{detailedIngredient.carbohydrates}</p>
         </div>
       </div>
     </>
   )
 }
-
-IngredientDetails.propTypes = {
-  ingredient: PropTypes.shape(INGREDIENT_OBJECT).isRequired
-};

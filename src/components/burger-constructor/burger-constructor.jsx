@@ -1,76 +1,153 @@
-import PropTypes from 'prop-types';
-import { Button, ConstructorElement, CurrencyIcon, DragIcon } from '@ya.praktikum/react-developer-burger-ui-components';
+import { useCallback, useMemo, useState } from 'react';
+import { useDrop } from "react-dnd";
+import { useDispatch, useSelector  } from 'react-redux';
+import { Button, ConstructorElement, CurrencyIcon } from '@ya.praktikum/react-developer-burger-ui-components';
 import styles from './burger-constructor.module.css';
-import { useMemo, useState } from 'react';
 import Modal from '../modal/modal';
 import OrderDetails from '../order-details/order-details';
-import { INGREDIENT_OBJECT } from '../../utils/types';
+import InnerIngredient from '../inner-ingredient/inner-ingredient';
+import { setBun, addInside, moveInside, deleteInside, clearConstructor } from '../../services/burger-constructor';
+import { getOrderData, clearOrderData, clearOrderError, setOrderDetailsOpen } from '../../services/order-details';
 
-export default function BurgerConstructor({ data }) {
+export default function BurgerConstructor() {
 
-  const [orderModalOpen, setOrderModalOpen] = useState(false);
+  const dispatch = useDispatch();
 
-  const bun = useMemo(() => data.filter(item => item.type === 'bun').sort(() => Math.random() - 0.5)[0], [data]); // temp dev
-  const inside = useMemo(() => data.filter(item => item.type != 'bun').sort(() => Math.random() - 0.5).slice(0, Math.floor(Math.random() * 13)), [data]); // temp dev
-  const total = 2 * bun.price + inside.reduce((sum, item) => sum + item.price, 0);
+  const [hoveredElement, setHoveredElement] = useState(false);
 
-  const orderNumber = '034536'; // temp dev
+  const [, dropTargetConstructor] = useDrop({
+    accept: 'ingredient',
+    drop({_id}) {
+      handleAdd(_id);
+    },
+  });
+
+  const [, dropTargetInner] = useDrop({
+    accept: 'inner',
+    hover({index}, monitor) {
+      const offset = monitor.getClientOffset();
+      const targetIndex = getTargetIndex(offset);
+      if (monitor.isOver({ shallow: true })) {
+        if (targetIndex !== index) {
+          setHoveredElement(targetIndex);
+        } else {
+          setHoveredElement(index);
+        }
+      } else {
+        setHoveredElement(null);
+      }
+    },
+    drop({_id, index}, monitor) {
+      const offset = monitor.getClientOffset();
+      const targetIndex = getTargetIndex(offset);
+      handleMove(_id, index, targetIndex);
+      setHoveredElement(null);
+    },
+  });
+
+  const { data } = useSelector((state) => state.burgerIngredients);
+  const { bun, inside } = useSelector((state) => state.burgerConstructor);
+  const { loadingData, loadingError } = useSelector((state) => state.burgerIngredients);
+  const { loadingOrder, orderError, orderDetailsOpen } = useSelector((state) => state.orderDetails);
+
+  const selectedBun = data.find(({_id}) => _id == bun);
+
+  const ingredientData = useCallback((itemID) => data.find(({_id}) => _id == itemID), [data]);
+
+  const totalPrice = useMemo(() => {
+    return 2 * selectedBun?.price + inside?.reduce((sum, itemID) => sum + ingredientData(itemID).price, 0);
+  }, [inside, selectedBun, ingredientData]);
+
+  function handleAdd(itemID) {
+    if (data.find(({_id}) => _id == itemID).type == 'bun') {
+      dispatch(setBun(itemID));
+    } else {
+      selectedBun && dispatch(addInside(itemID));
+    }
+  }
+
+  function handleMove(itemID, itemIndex, targetIndex) {
+    dispatch(moveInside({itemID, itemIndex, targetIndex}));
+  }
+
+  function handleDelete(itemIndex) {
+    dispatch(deleteInside(itemIndex));
+  }
+
+  function placeOrder() {
+    dispatch(getOrderData());
+  }
+
+  function resetOrderError() {
+    dispatch(clearOrderError());
+  }
+
+  function finalizeOrder() {
+    dispatch(clearOrderData());
+    dispatch(clearConstructor());
+    dispatch(setOrderDetailsOpen());
+  }
+
+  function getTargetIndex(offset) {
+    const containerTop = document.getElementById('inner-ingredients').getBoundingClientRect().top;
+    const elementHeight = 80;
+    const relativeOffset = offset.y - containerTop;
+    const index = Math.floor(relativeOffset / elementHeight);
+    return Math.min(index, inside.length - 1);
+  }
 
   return (
-    <section className={styles.container}>
+    <section className={styles.container} ref={dropTargetConstructor}>
 
-      <ConstructorElement
-        type="top"
-        isLocked={true}
-        text={`${bun.name} (верх)`}
-        price={bun.price}
-        thumbnail={bun.image} />
-
-      {inside.length > 0 
-        ?
-        <ul className={styles.innerIngredientsGroup}>
-          {inside.map(({ _id, name, price, image }) => (
-            <li key={_id} className={styles.innerIngredient}>
-              <DragIcon extraClass={styles.dragIcon}/>
-              <ConstructorElement
-              text={name}
-              price={price}
-              thumbnail={image} />
-            </li>
-          ))}
-        </ul>
-      :
+      {!selectedBun ?
+        <div className='text text_type_main-default mt-3 mr-1'>{!loadingData && !loadingError && 'Для начала перетащите сюда выбранную булку'}</div> :
+        <>
         <ConstructorElement
+          type="top"
           isLocked={true}
-          text={<div className='text text_type_main-default text_color_inactive'>Выберите первый ингредиент</div>}
-          price={null}
-          thumbnail={data.filter(item => item.type != 'bun')[Math.floor(Math.random() * 13)].image} />
-      }
+          text={`${selectedBun.name} (верх)`}
+          price={selectedBun.price}
+          thumbnail={selectedBun.image} />
 
-      <ConstructorElement
-        type="bottom"
-        isLocked={true}
-        text={`${bun.name} (низ)`}
-        price={bun.price}
-        thumbnail={bun.image} />
+        {inside.length > 0 
+          ?
+          <ul id='inner-ingredients' className={styles.innerIngredientsGroup} ref={dropTargetInner}>
+            {inside.map((itemID, i) => <InnerIngredient key={i} index={i} hoveredElement={hoveredElement} data={ingredientData(itemID)} onDelete={() => handleDelete(i)}/>)}
+          </ul>
+          :
+            <ConstructorElement
+              isLocked={true}
+              text={<div className='text text_type_main-default text_color_inactive'>Выберите первый ингредиент</div>}
+              price={null}
+              thumbnail={data.filter(item => item.type != 'bun')[Math.floor(Math.random() * 13)].image} />}
 
-      <div className={styles.total}>
-        <div className={styles.price}>
-          <p className='text text_type_digits-medium'>{total}</p>
-          <CurrencyIcon/>
+        <ConstructorElement
+          type="bottom"
+          isLocked={true}
+          text={`${selectedBun.name} (низ)`}
+          price={selectedBun.price}
+          thumbnail={selectedBun.image} />
+
+        <div className={styles.total}>
+          <div className={styles.price}>
+            <p className='text text_type_digits-medium'>{totalPrice}</p>
+            <CurrencyIcon/>
+          </div>
+          <Button size='large' htmlType='button' onClick={placeOrder}>{!loadingOrder ? 'Оформить заказ' : 'Уже оформляем!'}</Button>
         </div>
-        <Button size='large' htmlType='button' onClick={setOrderModalOpen}>Оформить заказ</Button>
-      </div>
-
-      {orderModalOpen &&
-        <Modal onClose={() => setOrderModalOpen(false)}>
-          <OrderDetails number={orderNumber}/>
+      </>}
+      
+      {orderDetailsOpen &&
+        <Modal onClose={finalizeOrder}>
+          <OrderDetails/>
         </Modal>}
 
+      {orderError &&
+        <Modal onClose={resetOrderError}>
+          <div className='text text_type_main-default mt-4 mb-20'>Что-то пошло не так,<br></br>попробуйте оформить заказ еще раз</div>
+          <Button size='medium' htmlType='button' onClick={resetOrderError}>{'Okay :('}</Button>
+        </Modal>}
+      
     </section>
   )
 }
-
-BurgerConstructor.propTypes = {
-  data: PropTypes.arrayOf(PropTypes.shape(INGREDIENT_OBJECT)).isRequired
-}; 
