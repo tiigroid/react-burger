@@ -3,16 +3,12 @@ import { postIngredients } from '../utils/api';
 
 export const getOrderData = createAsyncThunk(
   'order-details/postIngredients', 
-  async (_, { getState, rejectWithValue }) => {
-    try {
-      const { burgerConstructor } = getState();
-      const ingredients = burgerConstructor.inside;
-      const bun = burgerConstructor.bun;
-      const data = await postIngredients({ ingredients: [...ingredients, bun] });
-      return data;
-    } catch (error) {
-      return rejectWithValue(error);
-    }
+  async (_, { getState }) => {
+    const { burgerConstructor } = getState();
+    const ingredients = burgerConstructor.inside;
+    const bun = burgerConstructor.bun;
+    const data = await postIngredients({ ingredients: [...ingredients.map(({itemID}) => itemID), bun] });
+    return data;
   }
 );
 

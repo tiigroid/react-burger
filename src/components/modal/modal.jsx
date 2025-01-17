@@ -20,7 +20,7 @@ export default function Modal({ title, children, onClose }) {
   return (
     createPortal(
       <ModalOverlay onOverlayClick={onClose}>
-        <div className={styles.modal}>
+        <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
           <div className={styles.heading}>
             <h2 className='text text_type_main-large'>{title}</h2>
             <div className={styles.close}><CloseIcon onClick={onClose}/></div>

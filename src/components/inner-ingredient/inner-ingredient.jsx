@@ -3,13 +3,13 @@ import { ConstructorElement, DragIcon } from '@ya.praktikum/react-developer-burg
 import styles from './inner-ingredient.module.css';
 import { useDrag } from 'react-dnd';
 
-export default function InnerIngredient({ index, hoveredElement, data, onDelete }) {
+export default function InnerIngredient({ index, uniqueID, hoveredElement, data, onDelete }) {
 
   const { name, price, image, _id } = data;
 
   const [, dragRef] = useDrag({
     type: 'inner',
-    item: {_id, index}
+    item: {uniqueID, itemID: _id, index}
   });
 
   return (
@@ -26,6 +26,7 @@ export default function InnerIngredient({ index, hoveredElement, data, onDelete 
 
 InnerIngredient.propTypes = {
   index: PropTypes.number.isRequired,
+  uniqueID: PropTypes.string.isRequired,
   hoveredElement: PropTypes.any,
   data: PropTypes.shape({
     name: PropTypes.string.isRequired,

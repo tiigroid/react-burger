@@ -37,10 +37,10 @@ export default function BurgerConstructor() {
         setHoveredElement(null);
       }
     },
-    drop({_id, index}, monitor) {
+    drop({uniqueID, itemID, index}, monitor) {
       const offset = monitor.getClientOffset();
       const targetIndex = getTargetIndex(offset);
-      handleMove(_id, index, targetIndex);
+      handleMove(uniqueID, itemID, index, targetIndex);
       setHoveredElement(null);
     },
   });
@@ -55,7 +55,7 @@ export default function BurgerConstructor() {
   const ingredientData = useCallback((itemID) => data.find(({_id}) => _id == itemID), [data]);
 
   const totalPrice = useMemo(() => {
-    return 2 * selectedBun?.price + inside?.reduce((sum, itemID) => sum + ingredientData(itemID).price, 0);
+    return 2 * selectedBun?.price + inside?.reduce((sum, {itemID}) => sum + ingredientData(itemID).price, 0);
   }, [inside, selectedBun, ingredientData]);
 
   function handleAdd(itemID) {
@@ -66,8 +66,8 @@ export default function BurgerConstructor() {
     }
   }
 
-  function handleMove(itemID, itemIndex, targetIndex) {
-    dispatch(moveInside({itemID, itemIndex, targetIndex}));
+  function handleMove(uniqueID, itemID, itemIndex, targetIndex) {
+    dispatch(moveInside({uniqueID, itemID, itemIndex, targetIndex}));
   }
 
   function handleDelete(itemIndex) {
@@ -112,7 +112,7 @@ export default function BurgerConstructor() {
         {inside.length > 0 
           ?
           <ul id='inner-ingredients' className={styles.innerIngredientsGroup} ref={dropTargetInner}>
-            {inside.map((itemID, i) => <InnerIngredient key={i} index={i} hoveredElement={hoveredElement} data={ingredientData(itemID)} onDelete={() => handleDelete(i)}/>)}
+            {inside.map(({itemID, uniqueID}, i) => <InnerIngredient key={uniqueID} uniqueID={uniqueID} index={i} hoveredElement={hoveredElement} data={ingredientData(itemID)} onDelete={() => handleDelete(i)}/>)}
           </ul>
           :
             <ConstructorElement
