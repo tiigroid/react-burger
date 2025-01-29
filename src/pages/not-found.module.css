@@ -1,0 +1,11 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.digits {
+  margin-top: -180px;
+  opacity: .7;
+  color: aquamarine
+}

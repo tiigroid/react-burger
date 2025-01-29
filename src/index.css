@@ -7,11 +7,11 @@
 
 a {
   font-weight: 500;
-  color: #646cff;
+  color: inherit;
   text-decoration: inherit;
 }
 a:hover {
-  color: #535bf2;
+  color: inherit;
 }
 
 body {
@@ -44,6 +44,21 @@ button:hover {
 button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
+}
+
+.service-page-container {
+  width: 480px;
+  margin: 15vh 0 0;
+  position: relative;
+  display: grid;
+  justify-items: center;
+}
+
+.service-page-form {
+  display: grid;
+  gap: 24px;
+  margin-bottom: 80px;
+  justify-items: center;
 }
 
 @media (prefers-color-scheme: light) {

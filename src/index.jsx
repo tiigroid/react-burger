@@ -6,7 +6,8 @@ import { Provider } from 'react-redux';
 import burgerConstructorReducer from './services/burger-constructor';
 import burgerIngredientsReducer from './services/burger-ingredients';
 import orderDetailsReducer from './services/order-details';
-import ingredientDetailsReducer from './services/ingredient-details';
+import authReducer from './services/auth';
+import passwordReducer from './services/reset-password';
 import App from './components/app/app';
 
 const store = configureStore({
@@ -14,7 +15,8 @@ const store = configureStore({
     burgerConstructor: burgerConstructorReducer,
     burgerIngredients: burgerIngredientsReducer,
     orderDetails: orderDetailsReducer,
-    ingredientDetails: ingredientDetailsReducer
+    auth: authReducer,
+    password: passwordReducer
   },
   devTools: import.meta.env.NODE_ENV !== 'production'
 });

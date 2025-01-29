@@ -9,7 +9,7 @@ export const fetchIngredients = createAsyncThunk(
 const burgerIngredientsSlice = createSlice({
   name: 'burger-ingredients',
   initialState: {
-    data: [],
+    data: JSON.parse(sessionStorage.getItem('data')) || [],
     loadingData: false,
     loadingError: false
   },
@@ -22,6 +22,7 @@ const burgerIngredientsSlice = createSlice({
       .addCase(fetchIngredients.fulfilled, (state, action) => {
         state.loadingData = false;
         state.data = action.payload.data;
+        sessionStorage.setItem('data', JSON.stringify(action.payload.data));
       })
       .addCase(fetchIngredients.rejected, (state) => {
         state.loadingData = false;

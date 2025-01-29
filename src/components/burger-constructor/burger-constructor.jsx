@@ -1,4 +1,5 @@
 import { useCallback, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useDrop } from "react-dnd";
 import { useDispatch, useSelector  } from 'react-redux';
 import { Button, ConstructorElement, CurrencyIcon } from '@ya.praktikum/react-developer-burger-ui-components';
@@ -6,12 +7,14 @@ import styles from './burger-constructor.module.css';
 import Modal from '../modal/modal';
 import OrderDetails from '../order-details/order-details';
 import InnerIngredient from '../inner-ingredient/inner-ingredient';
+import ErrorPopup from '../error-popup/error-popup';
 import { setBun, addInside, moveInside, deleteInside, clearConstructor } from '../../services/burger-constructor';
 import { getOrderData, clearOrderData, clearOrderError, setOrderDetailsOpen } from '../../services/order-details';
 
 export default function BurgerConstructor() {
 
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const [hoveredElement, setHoveredElement] = useState(false);
 
@@ -45,6 +48,7 @@ export default function BurgerConstructor() {
     },
   });
 
+  const { accessToken } = useSelector((state) => state.auth);
   const { data } = useSelector((state) => state.burgerIngredients);
   const { bun, inside } = useSelector((state) => state.burgerConstructor);
   const { loadingData, loadingError } = useSelector((state) => state.burgerIngredients);
@@ -75,7 +79,11 @@ export default function BurgerConstructor() {
   }
 
   function placeOrder() {
-    dispatch(getOrderData());
+    if (accessToken) {
+      dispatch(getOrderData());
+    } else {
+      navigate('/login', { state: { from: 'order' } });
+    }
   }
 
   function resetOrderError() {
@@ -142,11 +150,7 @@ export default function BurgerConstructor() {
           <OrderDetails/>
         </Modal>}
 
-      {orderError &&
-        <Modal onClose={resetOrderError}>
-          <div className='text text_type_main-default mt-4 mb-20'>Что-то пошло не так,<br></br>попробуйте оформить заказ еще раз</div>
-          <Button size='medium' htmlType='button' onClick={resetOrderError}>{'Okay :('}</Button>
-        </Modal>}
+      {orderError && <ErrorPopup onClose={resetOrderError}/>}
       
     </section>
   )

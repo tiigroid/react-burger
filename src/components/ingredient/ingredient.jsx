@@ -1,10 +1,13 @@
 import PropTypes from 'prop-types';
+import { useNavigate } from 'react-router-dom';
 import { useDrag } from 'react-dnd';
 import { useSelector } from 'react-redux';
 import { Counter, CurrencyIcon } from '@ya.praktikum/react-developer-burger-ui-components';
 import styles from './ingredient.module.css';
 
-export default function Ingredient({ _id, image, name, price, onClick }) {
+export default function Ingredient({ _id, image, name, price }) {
+
+  const navigate = useNavigate();
 
   const [, dragRef] = useDrag({
     type: 'ingredient',
@@ -22,8 +25,12 @@ export default function Ingredient({ _id, image, name, price, onClick }) {
     }
   }
 
+  function handleClick(itemID) {
+    navigate(`/ingredients/${itemID}?modal=true`);
+  }
+
   return (
-    <li key={_id} className={styles.card}  onClick={() => onClick(_id)} ref={dragRef}>
+    <li key={_id} className={styles.card}  onClick={() => handleClick(_id)} ref={dragRef}>
       {count() !== 0 &&
         <Counter count={count()}/>}
       <img className={styles.image} src={image} alt={name}/>
@@ -40,6 +47,5 @@ Ingredient.propTypes = {
   _id: PropTypes.string.isRequired,
   image: PropTypes.string.isRequired,
   name: PropTypes.string.isRequired,
-  price: PropTypes.number.isRequired,
-  onClick: PropTypes.func.isRequired,
+  price: PropTypes.number.isRequired
 }; 

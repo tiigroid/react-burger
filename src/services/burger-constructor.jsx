@@ -17,7 +17,6 @@ const burgerConstructorSlice = createSlice({
       },
       prepare: (itemID) => {
         return { payload: { itemID, uniqueID: uuidv4() }}
-        // спасибо за инфу по ключам, а я-то гадала, почему все у меня дрегаются и дропаются на вид будто бы корректно, но как-то странно-тормозно))
       },
     },
     moveInside: (state, action) => {

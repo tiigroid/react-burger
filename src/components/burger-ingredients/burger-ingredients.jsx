@@ -1,12 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { fetchIngredients } from '../../services/burger-ingredients';
-import { setDetailedIngredient, clearDetailedIngredient, setIngredientDetailsOpen } from '../../services/ingredient-details';
 import { Tab } from '@ya.praktikum/react-developer-burger-ui-components';
 import styles from './burger-ingredients.module.css';
 import IngredientGroup from '../ingredient-group/ingredient-group';
-import IngredientDetails from '../ingredient-details/ingredient-details';
-import Modal from '../modal/modal';
 
 export default function BurgerIngredients() {
 
@@ -17,14 +14,13 @@ export default function BurgerIngredients() {
   const [currentTab, setCurrentTab] = useState('Булки');
   
   const { data, loadingData, loadingError } = useSelector((state) => state.burgerIngredients);
-  const { ingredientDetailsOpen } = useSelector((state) => state.ingredientDetails);
 
   const buns = data.filter(item => item.type == 'bun');
   const sauces = data.filter(item => item.type == 'sauce');
   const mains = data.filter(item => item.type == 'main');
 
   useEffect(() => {
-    dispatch(fetchIngredients());
+    if (data.length == 0) dispatch(fetchIngredients());
   }, [dispatch]);
 
   useEffect(() => {
@@ -49,15 +45,6 @@ export default function BurgerIngredients() {
     setCurrentTab(tab);
   }
 
-  function handleIngredientClick(itemID) {
-    dispatch(setDetailedIngredient(data.find(({_id}) => _id == itemID)));
-  }  
-
-  function handleDetailsClose() {
-    dispatch(setIngredientDetailsOpen());
-    dispatch(clearDetailedIngredient());
-  }
-
   return (
     <section className={styles.container}>
 
@@ -77,15 +64,10 @@ export default function BurgerIngredients() {
         </div>
 
         <div className={styles.ingredients} ref={scrollContainerRef}>
-          <IngredientGroup type='Булки' data={buns} onIngredientClick={handleIngredientClick}/>
-          <IngredientGroup type='Соусы' data={sauces} onIngredientClick={handleIngredientClick}/>
-          <IngredientGroup type='Начинки' data={mains} onIngredientClick={handleIngredientClick}/>
+          <IngredientGroup type='Булки' data={buns}/>
+          <IngredientGroup type='Соусы' data={sauces}/>
+          <IngredientGroup type='Начинки' data={mains}/>
         </div>
-
-        {ingredientDetailsOpen &&
-          <Modal title='Детали ингредиента' onClose={handleDetailsClose}>
-            <IngredientDetails/>
-          </Modal>}
 
       </>}
     </section>
