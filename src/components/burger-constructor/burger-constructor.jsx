@@ -82,7 +82,7 @@ export default function BurgerConstructor() {
     if (accessToken) {
       dispatch(getOrderData());
     } else {
-      navigate('/login', { state: { from: 'order' } });
+      navigate('/login');
     }
   }
 

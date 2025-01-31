@@ -1,20 +1,10 @@
 import { login } from '../services/auth';
-import { useSelector } from 'react-redux';
-import { Link, Navigate, useLocation } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { Button } from '@ya.praktikum/react-developer-burger-ui-components';
 import Form from '../components/form/form';
 import '../index.css';
 
 export default function Login() {
-
-  const location = useLocation();
-
-  const { accessToken } = useSelector((state) => state.auth);
-
-  if (accessToken) return (
-    <Navigate to={location.state?.from || '/'} replace />
-  )
-
   return (
     <div className='service-page-container'>
       <h1 className='text text_type_main-medium mb-6'>Вход</h1>

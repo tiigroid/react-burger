@@ -20,7 +20,7 @@ export default function Ingredient({ _id, image, name, price }) {
     if (_id == bun) {
       return 2;
     } else {
-      const count = inside.filter(ingredient => ingredient === _id).length;
+      const count = inside.filter(({itemID}) => itemID === _id).length;
       return count;
     }
   }

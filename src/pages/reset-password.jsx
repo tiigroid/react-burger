@@ -11,7 +11,6 @@ export default function ResetPassword() {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const { accessToken } = useSelector((state) => state.auth);
   const { passwordResetSuccess } = useSelector((state) => state.password);
 
   useEffect(() => {
@@ -20,10 +19,6 @@ export default function ResetPassword() {
     }
   }, [location, navigate]);
   
-  if (accessToken) return (
-    <Navigate to='/' replace />
-  )
-
   if (passwordResetSuccess) return (
     <Navigate to='/login' replace />
   )
