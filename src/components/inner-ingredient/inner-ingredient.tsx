@@ -1,9 +1,17 @@
-import PropTypes from 'prop-types';
 import { ConstructorElement, DragIcon } from '@ya.praktikum/react-developer-burger-ui-components';
 import styles from './inner-ingredient.module.css';
 import { useDrag } from 'react-dnd';
+import { IIngredientData } from '../../utils/types';
 
-export default function InnerIngredient({ index, uniqueID, hoveredElement, data, onDelete }) {
+interface IInnerIngredientElementProps {
+  index: number;
+  uniqueID: string;
+  hoveredElement: number | undefined;
+  data: IIngredientData;
+  onDelete: () => void;
+}
+
+export default function InnerIngredient({ index, uniqueID, hoveredElement, data, onDelete }: IInnerIngredientElementProps) {
 
   const { name, price, image, _id } = data;
 
@@ -14,7 +22,7 @@ export default function InnerIngredient({ index, uniqueID, hoveredElement, data,
 
   return (
     <li className={`${styles.innerIngredient} ${index === hoveredElement && styles.hovered}`} ref={dragRef}>
-      <DragIcon extraClass={styles.dragIcon}/>
+      <DragIcon type='primary'/>
       <ConstructorElement
         text={name}
         price={price}
@@ -23,16 +31,3 @@ export default function InnerIngredient({ index, uniqueID, hoveredElement, data,
     </li>
   )
 }
-
-InnerIngredient.propTypes = {
-  index: PropTypes.number.isRequired,
-  uniqueID: PropTypes.string.isRequired,
-  hoveredElement: PropTypes.any,
-  data: PropTypes.shape({
-    name: PropTypes.string.isRequired,
-    price: PropTypes.number.isRequired,
-    image: PropTypes.string.isRequired,
-    _id: PropTypes.string.isRequired
-  }).isRequired,
-  onDelete: PropTypes.func.isRequired,
-};

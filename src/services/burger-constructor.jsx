@@ -28,7 +28,7 @@ const burgerConstructorSlice = createSlice({
     deleteInside: (state, action) => {
       state.inside = state.inside.with(action.payload, null).filter(Boolean);
     },
-    clearConstructor: (state) => {
+    clearConstructor: (state, action) => {
       state.bun = '';
       state.inside = [];
     },

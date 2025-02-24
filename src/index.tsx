@@ -21,10 +21,15 @@ const store = configureStore({
   devTools: import.meta.env.NODE_ENV !== 'production'
 });
 
-createRoot(document.getElementById('root')).render(
-  <StrictMode>
+const rootElement = document.getElementById('root');
+if (rootElement) {
+  createRoot(rootElement).render(
+    <StrictMode>
       <Provider store={store}>
         <App />
       </Provider>
-  </StrictMode>,
-)
+    </StrictMode>
+  );
+} else {
+  console.error('No root element');
+}

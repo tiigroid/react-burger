@@ -11,11 +11,11 @@ export default function ResetPassword() {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const { passwordResetSuccess } = useSelector((state) => state.password);
+  const { passwordResetSuccess } = useSelector((state: any) => state.password);
 
   useEffect(() => {
     if (location.state?.from !== 'forgot') {
-      navigate(-1, { replace: true });
+      navigate(-1 as any, { replace: true });
     }
   }, [location, navigate]);
   

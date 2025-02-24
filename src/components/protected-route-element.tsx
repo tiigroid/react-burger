@@ -1,10 +1,15 @@
-import PropTypes from 'prop-types';
+import { ReactNode } from 'react';
 import { useSelector } from 'react-redux';
 import { Navigate, useLocation } from 'react-router-dom';
 
-export default function ProtectedRouteElement({ element, usersOnly = false }) {
+interface IProtectedRouteElementProps {
+  element: ReactNode;
+  usersOnly?: boolean;
+}
 
-  const { accessToken } = useSelector((state) => state.auth);
+export default function ProtectedRouteElement({ element, usersOnly = false }: IProtectedRouteElementProps) {
+
+  const { accessToken } = useSelector((state: any) => state.auth);
 
   const location = useLocation();
   const from = location.state?.from || '/';
@@ -19,8 +24,3 @@ export default function ProtectedRouteElement({ element, usersOnly = false }) {
 
   return element;
 }
-
-ProtectedRouteElement.propTypes = {
-  element: PropTypes.node,
-  usersOnly: PropTypes.bool,
-};
