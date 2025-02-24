@@ -4,15 +4,16 @@ import { useDispatch, useSelector } from 'react-redux';
 import { CheckMarkIcon, CloseIcon, EditIcon, Input } from '@ya.praktikum/react-developer-burger-ui-components';
 import { fetchUserData, patchUserData, logout } from '../services/auth';
 import styles from './profile.module.css';
+import { IUserData } from '../utils/types';
 
 export default function Profile() {
 
   const dispatch = useDispatch();
 
-  const { name, email } = useSelector((state) => state.auth.userData);
+  const { name, email } = useSelector((state: any) => state.auth.userData);
 
-  const [editing, setEditing] = useState([]);
-  const [userData, setUserData] = useState({
+  const [editing, setEditing] = useState<string[]>([]);
+  const [userData, setUserData] = useState<IUserData>({
     name: '',
     email: '',
     password: ''
@@ -20,13 +21,13 @@ export default function Profile() {
 
   useEffect(() => {
     if (!name || !email) {
-      dispatch(fetchUserData());
+      dispatch(fetchUserData() as any);
     } else {
       setUserData({ name, email, password: '********' })
     }
   }, [name, email, dispatch]);
 
-  function handleEditing(input) {
+  function handleEditing(input: string) {
     if (editing.includes(input)) {
       setEditing(editing.filter(item => item != input));
     } else {
@@ -35,24 +36,24 @@ export default function Profile() {
     }
   }
 
-  function handleClosing(input) {
+  function handleClosing(input: string) {
     handleEditing(input);
     if (input == 'name') setUserData({ ...userData, name });
     if (input == 'email') setUserData({ ...userData, email });
     if (input == 'password') setUserData({ ...userData, password: '********' });
   }
 
-  function checkDisabled(value) {
+  function checkDisabled(value: string) {
     return editing.includes(value) ? false : true;
   }
 
   function handleUpdate() {
-    dispatch(patchUserData({ ...userData, password: userData.password == '********' ? null : userData.password }));
+    dispatch(patchUserData({ ...userData, password: userData.password == '********' ? '' : userData.password }) as any);
     setEditing([]);
   }
 
   function handleLogout() {
-    dispatch(logout());
+    dispatch(logout() as any);
   }
 
   return (
@@ -67,43 +68,44 @@ export default function Profile() {
       </div>
       <div className={styles.inputs}>
         <div className={styles.input}>
-          <Input value={userData.name} onChange={(e) => setUserData({ ...userData, name: e.target.value })} placeholder='Имя' disabled={checkDisabled('name')}/>
+          <Input value={userData.name || ''} onChange={(e) => setUserData({ ...userData, name: e.target.value })} placeholder='Имя' disabled={checkDisabled('name')} />
           <div className={styles.icon}>
             {!editing.includes('name') 
-            ? <div onClick={() => handleEditing('name')}><EditIcon/></div>
+            ? <div onClick={() => handleEditing('name')}><EditIcon type='primary'/></div>
             : 
             <>
-              <div onClick={handleUpdate}><CheckMarkIcon/></div>
-              <div className='ml-1' onClick={() => handleClosing('name')}><CloseIcon/></div>
+              <div onClick={handleUpdate}><CheckMarkIcon type='primary'/></div>
+              <div className='ml-1' onClick={() => handleClosing('name')}><CloseIcon type='primary'/></div>
             </>}
           </div>
         </div>
         <div className={styles.input}>
-          <Input value={userData.email} onChange={(e) => setUserData({ ...userData, email: e.target.value })} placeholder='Логин' disabled={checkDisabled('email')}/>
+          <Input value={userData.email || ''} onChange={(e) => setUserData({ ...userData, email: e.target.value })} placeholder='Логин' disabled={checkDisabled('email')} />
           <div className={styles.icon}>
             {!editing.includes('email')
-            ? <div onClick={() => handleEditing('email')}><EditIcon/></div>
+            ? <div onClick={() => handleEditing('email')}><EditIcon type='primary'/></div>
             : 
             <>
-              <div onClick={handleUpdate}><CheckMarkIcon/></div>
-              <div className='ml-1' onClick={() => handleClosing('email')}><CloseIcon/></div>
+              <div onClick={handleUpdate}><CheckMarkIcon type='primary'/></div>
+              <div className='ml-1' onClick={() => handleClosing('email')}><CloseIcon type='primary'/></div>
             </>}
           </div>
         </div>
         <div className={styles.input}>
           <Input
-            value={userData.password}
+            value={userData.password || ''}
             onChange={(e) => setUserData({ ...userData, password: e.target.value })}
             type={!editing.includes('password') ? 'password' : 'text'}
             placeholder='Пароль'
-            disabled={checkDisabled('password')}/>
+            disabled={checkDisabled('password')}
+            />
           <div className={styles.icon}>
             {!editing.includes('password') 
-            ? <div onClick={() => handleEditing('password')}><EditIcon/></div>
+            ? <div onClick={() => handleEditing('password')}><EditIcon type='primary'/></div>
             : 
             <>
-              <div onClick={handleUpdate}><CheckMarkIcon/></div>
-              <div className='ml-1' onClick={() => handleClosing('password')}><CloseIcon/></div>
+              <div onClick={handleUpdate}><CheckMarkIcon type='primary'/></div>
+              <div className='ml-1' onClick={() => handleClosing('password')}><CloseIcon type='primary'/></div>
             </>}
           </div>
         </div>

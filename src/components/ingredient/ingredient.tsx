@@ -1,11 +1,11 @@
-import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
 import { useDrag } from 'react-dnd';
 import { useSelector } from 'react-redux';
 import { Counter, CurrencyIcon } from '@ya.praktikum/react-developer-burger-ui-components';
 import styles from './ingredient.module.css';
+import { IIngredientData } from '../../utils/types';
 
-export default function Ingredient({ _id, image, name, price }) {
+export default function Ingredient({ _id, image, name, price }: IIngredientData) {
 
   const navigate = useNavigate();
 
@@ -14,7 +14,10 @@ export default function Ingredient({ _id, image, name, price }) {
     item: {_id}
   });
 
-  const { bun, inside } = useSelector((state) => state.burgerConstructor);
+  const { bun, inside } = useSelector((state: any) => state.burgerConstructor) as {
+    bun: string;
+    inside: { itemID: string; uniqueID: string }[]
+  };
   
   function count() {
     if (_id == bun) {
@@ -25,7 +28,7 @@ export default function Ingredient({ _id, image, name, price }) {
     }
   }
 
-  function handleClick(itemID) {
+  function handleClick(itemID: string) {
     navigate(`/ingredients/${itemID}?modal=true`);
   }
 
@@ -36,16 +39,9 @@ export default function Ingredient({ _id, image, name, price }) {
       <img className={styles.image} src={image} alt={name}/>
         <div className={styles.price}>
           <p className='text text_type_digits-default pr-2'>{price}</p>
-          <CurrencyIcon />
+          <CurrencyIcon type='primary'/>
         </div>
         <p className={`${styles.name} text text_type_main-default`}>{name}</p>
     </li>
   );
 }
-
-Ingredient.propTypes = {
-  _id: PropTypes.string.isRequired,
-  image: PropTypes.string.isRequired,
-  name: PropTypes.string.isRequired,
-  price: PropTypes.number.isRequired
-}; 

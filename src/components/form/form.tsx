@@ -1,5 +1,4 @@
-import PropTypes from 'prop-types';
-import { useEffect, useState } from 'react';
+import { FormEvent, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { clearAuthError } from '../../services/auth';
 import { clearResetError } from '../../services/reset-password';
@@ -8,23 +7,30 @@ import '../../index.css';
 import styles from './form.module.css';
 import ErrorPopup from '../error-popup/error-popup';
 
-export default function Form({ inputs, placeholders, button, onSubmit }) {
+interface IFormElementProps {
+  inputs: string[];
+  placeholders: string[];
+  button: string;
+  onSubmit: (form: any) => any;
+}
+
+export default function Form({ inputs, placeholders, button, onSubmit }: IFormElementProps) {
 
   const dispatch = useDispatch();
 
-  const { authLoading, authError } = useSelector((state) => state.auth);
-  const { resetLoading, resetError } = useSelector((state) => state.password);
+  const { authLoading, authError } = useSelector((state: any) => state.auth);
+  const { resetLoading, resetError } = useSelector((state: any) => state.password);
 
-  const [form, setForm] = useState({});
+  const [form, setForm] = useState({} as { [key: string]: string });
   const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
-    let initialState = {};
+    let initialState: { [key: string]: string } = {};
     inputs.forEach(input => initialState[input] = '');
     setForm(initialState);
   }, []);
 
-  function handleSubmit(e) {
+  function handleSubmit(e: FormEvent) {
     e?.preventDefault();
     dispatch(onSubmit(form));
   }
@@ -53,16 +59,15 @@ export default function Form({ inputs, placeholders, button, onSubmit }) {
           <div key={i} className={styles.input}>
             <Input
               value={form[input] || ''}
-              onChange={(e) => setForm({ ...form, [input]: e.target.value})}
+              onChange={(e) => setForm({ ...form, [input]: e.target.value })}
               placeholder={placeholders[i]}
-              type={
-                input == 'password' ? !showPassword ? 'password' : 'text' :
+              type={input == 'password' ? !showPassword ? 'password' : 'text' :
                 input == 'email' ? 'email' : 'text'}/>
             {input == 'password' &&
             <div className={styles.icon} onClick={toggleShowPassword}>
               {!showPassword
-                ? <ShowIcon/>
-                : <HideIcon/>}
+                ? <ShowIcon type='primary'/>
+                : <HideIcon type='primary'/>}
             </div>}
           </div>
         ))}
@@ -72,11 +77,4 @@ export default function Form({ inputs, placeholders, button, onSubmit }) {
       {(authError || resetError) && <ErrorPopup onClose={resetErrors}/>}
     </>
   )
-}
-
-Form.propTypes = {
-  inputs: PropTypes.array.isRequired,
-  placeholders: PropTypes.array.isRequired,
-  button: PropTypes.string.isRequired,
-  onSubmit: PropTypes.func.isRequired,
 }

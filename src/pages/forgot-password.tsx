@@ -7,7 +7,7 @@ import '../index.css';
 
 export default function ForgotPassword() {
 
-  const { resetEmailSent } = useSelector((state) => state.password);
+  const { resetEmailSent } = useSelector((state: any) => state.password);
 
   if (resetEmailSent) return (
     <Navigate to='/reset-password' replace state={{ from: 'forgot' }}/>
